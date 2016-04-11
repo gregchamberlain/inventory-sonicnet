@@ -25,15 +25,28 @@ class OrdersController < ApplicationController
   # POST /orders.json
   def create
     @order = Order.new(order_params)
+    puts "TO: #{@order.to.name}    FROM: #{@order.from.name}"
 
     respond_to do |format|
       if @order.save
+        @order.orderables.each do |orderable|
+          update_stock(orderable.item, orderable.quantity, @order.from, @order.to)
+        end
         format.html { redirect_to @order, notice: 'Order was successfully created.' }
         format.json { render :show, status: :created, location: @order }
       else
         format.html { render :new }
         format.json { render json: @order.errors, status: :unprocessable_entity }
       end
+    end
+  end
+
+  def update_stock(item, quantity, from, to)
+    stock = ItemStock.where(["location_id = ? and item_id = ?", from.id, item.id]).first
+    if stock
+      puts "Stock: #{stock.to_s}"
+    else
+      puts "No Stock"
     end
   end
 

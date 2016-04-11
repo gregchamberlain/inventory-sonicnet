@@ -1,5 +1,5 @@
 class Location < ActiveRecord::Base
 
-	enum category: [:customer, :tower, :vehicle, :storage]
+	enum category: [:customer, :tower, :vehicle, :storage, :vendor]
 
 end

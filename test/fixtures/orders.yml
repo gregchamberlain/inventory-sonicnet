@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  from_location: 1
+  to_location: 1
+  details: MyText
+
+two:
+  from_location: 1
+  to_location: 1
+  details: MyText

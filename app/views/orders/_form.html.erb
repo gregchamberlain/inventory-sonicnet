@@ -1,0 +1,39 @@
+<%= form_for(@order) do |f| %>
+  <% if @order.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@order.errors.count, "error") %> prohibited this order from being saved:</h2>
+
+      <ul>
+      <% @order.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= f.label :from_location %><br>
+    <%= f.select :from_location, Location.all.collect { |loc| [loc.name, loc.id] }, { include_blank: 'Select a From Location'}, class: "form-control" %>
+  </div>
+  <div class="form-group">
+    <%= f.label :to_location %><br>
+    <%= f.select :to_location, Location.all.collect { |loc| [loc.name, loc.id] }, { include_blank: 'Select an To Location'}, class: "form-control" %>
+  </div>
+  <div class="form-group">
+    <%= f.label :details %><br>
+    <%= f.text_area :details, class: "form-control" %>
+  </div>
+  <h3>Orderables</h3>
+  <div id="orderables">
+    <%= f.fields_for :orderables do |orderable| %>
+      <%= render 'orderable_fields', f: orderable %>
+    <% end %>
+    <div class="links">
+      <%= link_to_add_association 'Add Item', f, :orderables, class: "btn btn-success" %>
+    </div>
+  </div>
+  <br>
+  <div class="for-group">
+    <%= f.submit "Save", class: "btn btn-primary" %>
+  </div>
+<% end %>

@@ -42,11 +42,37 @@ class OrdersController < ApplicationController
   end
 
   def update_stock(item, quantity, from, to)
-    stock = ItemStock.where(["location_id = ? and item_id = ?", from.id, item.id]).first
-    if stock
-      puts "Stock: #{stock.to_s}"
+    from_stock = from.item_stocks.find_by(item: item)
+    to_stock = to.item_stocks.find_by(item: item)
+
+    # Update stock taken from
+    if from_stock
+      from_stock.quantity = from_stock.quantity - quantity
+      puts "#{quantity} #{item.model} taken from #{from.name}"
     else
-      puts "No Stock"
+      from_stock = ItemStock.new({"location_id"=>from.id, "item_id"=>item.id, "quantity"=>-quantity})
+      puts "#{quantity} #{item.model} created and taken from #{from.name}"
+    end
+
+    # Update stock put in
+    if to_stock
+      to_stock.quantity = to_stock.quantity + quantity
+      puts "#{quantity} #{item.model} put in #{to.name}"
+    else
+      to_stock = ItemStock.new({"location_id"=>to.id, "item_id"=>item.id, "quantity"=>quantity})
+      puts "#{quantity} #{item.model} created and put in #{to.name}"
+    end
+
+    if from_stock.save
+      puts "From Stock successfully saved"
+    else
+      puts from_stock.errors
+    end
+
+    if to_stock.save
+      puts "To Stock successfully saved"
+    else
+      puts to_stock.errors
     end
   end
 

@@ -18,6 +18,7 @@
 		  	<%= order.from.name %>
 		  	<span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
 		  	<%= order.to.name %>
+		  	<div style="float: right;"><small><%= order.created_at.strftime("%m/%d/%Y") %></small></div>
 		  </div>
 		  <div class="panel-body">
 		  	<table class="table">

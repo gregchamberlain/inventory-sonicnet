@@ -41,9 +41,13 @@ class OrdersController < ApplicationController
     end
   end
 
-  def update_stock(item, quantity, from, to)
+  def update_stock(item, quantity, from, to, revert = false)
     from_stock = from.item_stocks.find_by(item: item)
     to_stock = to.item_stocks.find_by(item: item)
+
+    if revert
+      quantity = -1 * quantity
+    end
 
     # Update stock taken from
     if from_stock
@@ -79,8 +83,14 @@ class OrdersController < ApplicationController
   # PATCH/PUT /orders/1
   # PATCH/PUT /orders/1.json
   def update
+    @order.orderables.each do |orderable|
+      update_stock(orderable.item, orderable.quantity, @order.from, @order.to, true)
+    end
     respond_to do |format|
       if @order.update(order_params)
+         @order.orderables.each do |orderable|
+          update_stock(orderable.item, orderable.quantity, @order.from, @order.to)
+        end
         format.html { redirect_to @order, notice: 'Order was successfully updated.' }
         format.json { render :show, status: :ok, location: @order }
       else
@@ -93,6 +103,9 @@ class OrdersController < ApplicationController
   # DELETE /orders/1
   # DELETE /orders/1.json
   def destroy
+    @order.orderables.each do |orderable|
+      update_stock(orderable.item, orderable.quantity, @order.from, @order.to, true)
+    end
     @order.destroy
     respond_to do |format|
       format.html { redirect_to orders_url, notice: 'Order was successfully destroyed.' }

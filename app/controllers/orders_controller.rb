@@ -51,13 +51,15 @@ class OrdersController < ApplicationController
       quantity = -1 * quantity
     end
 
-    # Update stock taken from
-    if from_stock
-      from_stock.quantity = from_stock.quantity - quantity
-      puts "#{quantity} #{item.model} taken from #{from.name}"
-    else
-      from_stock = ItemStock.new({"location_id"=>from.id, "item_id"=>item.id, "quantity"=>-quantity})
-      puts "#{quantity} #{item.model} created and taken from #{from.name}"
+    if !from.vendor?
+      # Update stock taken from
+      if from_stock
+        from_stock.quantity = from_stock.quantity - quantity
+        puts "#{quantity} #{item.model} taken from #{from.name}"
+      else
+        from_stock = ItemStock.new({"location_id"=>from.id, "item_id"=>item.id, "quantity"=>-quantity})
+        puts "#{quantity} #{item.model} created and taken from #{from.name}"
+      end
     end
 
     # Update stock put in
